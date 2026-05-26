@@ -277,12 +277,26 @@ The Riley model (1946, 1947) was the first to calculate statistical correlations
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Frame Title}
+\begin{frame}{The ERSEM legacy}
 \begin{columns}
-\column{0.5\linewidth}
-\column{0.5\linewidth}
+\column{0.3\linewidth}
+The European Regional Seas Ecosystem Model was the first of its kind to combine lower and higher trophic levels, including benthic-pelagic coupling. It was implemented on a very coarse grid in the North Sea, but since then it evolved in two different branches, the \href{https://pml.ac.uk/projects/ersem-european-regional-seas-ecosystem-model/}{PML ERSEM} and the \href{https://www.bfm-community.eu/}{Biogeochemical Flux Model}.
+\column{0.7\linewidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/ERSEM.png}
+\end{figure}
 \end{columns}
 \end{frame}
+%------------------------------------------------
+\begin{frame}{Model complexity}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/fennel22-bgc-complexity.png}
+\end{figure}
+\small{From \href{https://escholarship.org/uc/item/8219x0z0}{Fennel et al. (2022)}. Schematic representation of the state variables and biogeochemical transformations across a range of OBMs with increasing complexity from left to right. Squares represent state variables. Solid arrows represent selected transformations between state variables. Dashed arrows illustrate vertical sinking of particles.}
+\end{frame}
+
 
 %------------------------------------------------
 \section{Elements of the Green Ocean models}
@@ -290,8 +304,64 @@ The Riley model (1946, 1947) was the first to calculate statistical correlations
 \begin{frame}{The green ocean: a quantitative description for biogeochemistry}
 \begin{itemize}
 \item In marine chemical--biological systems, problems are often more complex than in purely physical systems. The governing equations of the chemical--biological dynamics cannot be derived explicitly from conservation laws as in Newton's mechanics or in geophysical fluid dynamics.
+\item The transport of biogeochemical constituents in the ocean must follow the rules of fluid dynamics, and therefore biogeochemical equations are coupled to physical equations in Ocean Biogeochemistry Models (OBM) or Green Ocean Models.
 \item These equations must be derived from observations. Experimental findings can be translated into mathematical formulations that describe the process quantitatively. These functions represent the \textbf{response curves (or reaction norms)} and the interactions between drivers and state variables. The combination of these formulations constitutes a dynamical model.
 \item \url{https://marine.copernicus.eu/explainers/operational-oceanography/monitoring-forecasting/models/green-ocean}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Coupling Physics and BGC: Advection-Diffusion-Reaction Equations}
+The conservation equations for tracers of an ocean model are extended with a reaction term, which is local (it does not directly depend on spatial gradients, but it can be affected by them in the overall solution). $R(C)$ is basically an ODE:
+\[
+\frac{\partial C}{\partial t}
++ \mathbf{u} \cdot \nabla C
+= \nabla \cdot (K \nabla C) + R(C)
+\]
+This equation is now resolved at an increasingly high resolution: \url{https://www.gfdl.noaa.gov/visualization/visualizations-oceans/#}
+
+In the vertical direction, this would look like
+\[
+\frac{\partial C}{\partial t}
+= \frac{\partial}{\partial z}
+\left(K_z \frac{\partial C}{\partial z}\right) + \dot{C}
+\]
+Notice that the biogeochemical rate of change $\dot{C}$ is the same in all three spatial directions.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{The Continuum Hypothesis in OBM}    
+\begin{columns}
+\column{0.3\linewidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/standard-organism-vichi.png}
+    \includegraphics[width=0.8\linewidth]{figures/control_volume.png}
+\end{figure}
+\column{0.7\linewidth}
+\vspace{-1cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/CFF-vichi.png}
+\end{figure}
+\vspace{-0.5cm}
+\scriptsize{The field $C(\mathbf{x}, t)$ is a continuous function, such as temperature and salinity. In biomass-based OBMs it is assumed that the number of (equal) \textit{standard organisms} (like phytoplankton cells) is high and uniformly  distributed. They can thus be described by concentrations of \textit{virtual} chemical functional families (CFF, \href{https://doi.org/10.1016/j.jmarsys.2006.03.006}{Vichi et al., 2007}), which are continuous functions of space and time. The fluxes inside and around a control volume describe the processes that change the concentration of the CFF, which can have different currencies.}
+\end{columns}
+\end{frame}
+
+%-------------------------------------------------
+\begin{frame}{Optional Exercise US2.4-bgc01: Measuring Phytoplankton Biomass}
+\begin{itemize}
+\item {\small{}This exercise will show you the relevance of multiple currencies. Phytoplankton biomass can be measured in different ways and follows an exponential phase until resources become limiting or other factors control growth}{\small\par}
+\item {\small{}The file }\texttt{\small{}data\textbackslash flynn94.csv}{\small{} contains data from a batch experiment conducted by Flynn et al. (1994). The full table and the related units are available in file }\texttt{\small{}flynn94.pdf}{\small{}.
+}\emph{\small{}Flynn, K.J., Davidson, K., Leftley, J.W., 1994. Carbon-nitrogen relations at whole-cell and free-amino-acid levels during batch growth of Isochrysis galbana (Prymnesiophyceae) under conditions of alternating light and dark. Marine Biology 118, 229--237. https://doi.org/10.1007/BF00349789}{\small\par}
+\item {\small{}Plot the data in a notebook and answer the following questions}{\small\par}
+\begin{enumerate}
+\item {\small{}Is the growth exponential? }{\small\par}
+\item {\small{}Can you separate the growth curve into some phases?}{\small\par}
+\item {\small{}How different is the growth expressed in cellular carbon from that measured in cell number and chlorophyll?}{\small\par}
+\item {\small{}Is the ammonium consumption approximated by an exponential curve?}{\small\par}
+\end{enumerate}
 \end{itemize}
 \end{frame}
 
@@ -463,7 +533,7 @@ the dynamics of the exponential growth model
 
 %-------------------------------------------------
 \begin{frame}{Light attenuation: the Lambert-beer equation}
-\begin{columns}[t]
+\begin{columns}
 \column{8cm}
 \begin{itemize}
 \item \small{Life in the ocean comes from primary production, which depends on light availability.}
@@ -485,25 +555,6 @@ which can be solved analytically with the boundary condition $I(z=0)=I_{0}$
 \[
 I(z)=I_{0}e^{-\varepsilon z}
 \]
-\end{itemize}
-\end{frame}
-
-
-%-------------------------------------------------
-\begin{frame}{Optional Exercise: different types of growth rates}
-\begin{itemize}
-\item {\small{}Phytoplankton growth follows an exponential phase, at least for a certain period of time until resources may become limiting or other factors control the Malthusian growth}{\small\par}
-\item {\small{}The file }\texttt{\small{}flynn94.csv}{\small{} contains data from a batch experiment conducted by Flynn et al. (1994). The full table and the related units are available in file }\texttt{\small{}flynn94.pdf}{\small{}.
-}\emph{\small{}Flynn, K.J., Davidson, K., Leftley, J.W., 1994. Carbon-nitrogen relations at whole-cell and free-amino-acid levels during batch growth of Isochrysis galbana (Prymnesiophyceae) under conditions of alternating light and dark. Marine Biology 118, 229--237. https://doi.org/10.1007/BF00349789}{\small\par}
-\item {\small{}Plot the data using a software of your choice and answer the following questions}{\small\par}
-\begin{enumerate}
-\item {\small{}Is the growth exponential? }{\small\par}
-\item {\small{}Can you separate the growth curve into some phases?}{\small\par}
-\item {\small{}How different is the growth expressed in cellular carbon from the one in cell number and chlorophyll?}{\small\par}
-\item {\small{}Is the ammonium consumption approximated by an exponential
-curve?}{\small\par}
-\item {\small{}How would you estimate the parameters of the growth curve?}{\small\par}
-\end{enumerate}
 \end{itemize}
 \end{frame}
 
@@ -605,6 +656,14 @@ P(t)= & P_{0}\frac{P_{0}+N_{0}}{P_{0}+N_{0}e^{-k'\left(P_{0}+N_{0}\right)t}}
 
 \end{frame}
 
+\begin{frame}{Numerical time integration: ODE solvers}
+\begin{itemize}
+\item Most natural systems can only be described with mathematical models that do not have an analytical solution
+\item But we do not need to do the full derivation and write the computer code for each case.
+\item There exist several numerical methods based on \textbf{finite differences} and they are grouped under the name of \textbf{ODE solvers}. In the next tutorial and in the exercise on the LV model, we will use the python ODE solver called \texttt{odeint} from the \texttt{scipy} module.
+\item They basically require you to input the right hand side of the differential equations and then use it to compute the solution forward in time at discrete time intervals.
+\end{itemize}
+\end{frame}
 %-------------------------------------------------
 \begin{frame}{Tutorial: Limited Growth}
 \begin{itemize}
@@ -654,15 +713,6 @@ more about them in the textbook chapter}}{\footnotesize{}): 1) The prey populati
 The LV model is nowadays used mostly for educational purposes, because it allows a rigorous analysis to illustrate the major aspects of mathematical biology and it is a tractable example of numerical solution of ODE systems. Moreover, it does contain elements that are common to any marine model.
 \end{frame}
 
-\begin{frame}{Numerical time integration: ODE solvers}
-\begin{itemize}
-\item Most natural systems can only be described with mathematical models that do not have an analytical solution
-\item But we don't need to do the full derivation and write the computer code for each case
-\item There exist several numerical methods based on \textbf{finite differences} and they are grouped under the name of \textbf{ODE solvers}. In the LV integration we will use the python ODE solver called \texttt{odeint} from the \texttt{scipy} module
-\item They basically require you to input the right hand side of the differential equations and then use it to compute the solution forward in time at discrete time intervals 
-\end{itemize}
-\end{frame}
-
 %-------------------------------------------------
 \begin{frame}{Exercise US2.4-bgc02: Lotka-Volterra model}
 \begin{itemize}
@@ -675,132 +725,69 @@ The LV model is nowadays used mostly for educational purposes, because it allows
 \end{itemize}
 \end{frame}
 
-\section{Additional}
 %------------------------------------------------
-
-
+\section{It's a wrap...}
 %------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Light limitation}}
-\[
-P = P_{max} \left(1 - e^{-\alpha E/P_{max}}\right)
-\]
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Marine biogeochemical models}}
+\begin{frame}{What is Biogeochemical Modelling? (Core Concepts I)}
 \begin{itemize}
-\item NPZD
-\item ERSEM
+    \item \textbf{Integration of disciplines:} Combines physics, chemistry, and biology to describe ocean ecosystems
+    \item \textbf{Mass balance framework:} All models track stocks and flows via  
+    \[
+    \frac{dC}{dt} = \text{sources} - \text{sinks}
+    \]
+    \item \textbf{Empirical biology:} Unlike physics, biological processes are parameterized from observations (response curves, assumptions)
+    \item \textbf{State variables \& trophic structure:} Ecosystems represented as compartments (e.g. nutrients, phytoplankton, zooplankton) linked by fluxes
 \end{itemize}
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{ERSEM}}
-\includegraphics[width=\linewidth]{figure_placeholder}
+%-----------------------------------
+\begin{frame}{What is Biogeochemical Modelling? (Core Concepts II)}
+\begin{itemize}
+    \item \textbf{Drivers vs processes:}
+    \begin{itemize}
+        \item Drivers = environmental controls (light, temperature, nutrients)
+        \item Processes = growth, uptake, predation described by nonlinear response functions
+    \end{itemize}
+    \item \textbf{Coupled system:} Ocean BGC models link biology to circulation via advection--diffusion--reaction equations
+\end{itemize}
+\textbf{Key message:} Biogeochemical models are data--driven, coupled dynamical systems representing ecosystem interactions and environmental forcing.
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Chemical functional families}}
-\includegraphics[width=\linewidth]{figure_placeholder}
+%-----------------------------------
+\begin{frame}{How We Model Ocean Biogeochemistry (Approaches)}
+\begin{itemize}
+    \item \textbf{Model hierarchy (increasing complexity):}
+    \begin{itemize}
+        \item Simple: NP, NPZD box models (ODEs)
+        \item Intermediate: Fasham--type (multi--compartment)
+        \item Advanced: Green Ocean models (fully coupled systems)
+    \end{itemize}
+    \item \textbf{Mathematical backbone:}
+    \begin{itemize}
+        \item ODE systems for local ecosystem dynamics (box models)
+        \item Reaction terms represent biological rates
+        \item Often require numerical solvers (no analytical solution)
+    \end{itemize}
+\end{itemize}
+
 \end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Living functional groups}}
-\includegraphics[width=\linewidth]{figure_placeholder}
+%-----------------------------------
+\begin{frame}{How We Model Ocean Biogeochemistry (Insights)}
+\begin{itemize}
+    \item \textbf{Key ecological principles:}
+    \begin{itemize}
+        \item Growth is often exponential, but resource--limited (nonlinear)
+        \item Ecosystem interactions (e.g. predator--prey) generate complex dynamics
+        \item Environmental forcing (especially energy, turbulence, light) strongly shapes biogeochemical dynamics
+    \end{itemize}
+    \item \textbf{Critical modelling choices:}
+    \begin{itemize}
+        \item Selection of state variables \& currencies (C, N, biomass, etc.)
+        \item Choice of functional responses (e.g. Michaelis--Menten, light curves, temperature response)
+        \item Trade-off between complexity vs interpretability
+    \end{itemize}
+\end{itemize}
+\textbf{Key message:} Ocean biogeochemistry models range from simple conceptual ODE systems to complex coupled simulations, but all rely on nonlinear interactions, environmental forcing, and careful parameterization.
 \end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Generic formalism}}
-\[
-\mathbf{X} = (C, N, P, Fe, Chl)
-\]
-
-\[
-\frac{d\mathbf{X}}{dt} = \mathbf{F}(\mathbf{X}, E)
-\]
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Biogeochemical Flux Model}}
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Modularity}}
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Linking physics and biology}}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Phytoplankton blooms}}
-\[
-\int_0^{z_c} P(z)\,dz = \int_0^{z_c} R(z)\,dz
-\]
-
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{OBGCM}}
-\[
-C = C(\mathbf{x}, t)
-\]
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Continuum hypothesis}}
-\[
-C(\mathbf{x}, t) \text{ continuous}
-\]
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{Advection-Diffusion-Reaction}}
-\[
-\frac{\partial C}{\partial t}
-+ \mathbf{u} \cdot \nabla C
-= \nabla \cdot (K \nabla C) + R(C)
-\]
-
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{ADR simplified}}
-\[
-\frac{\partial C}{\partial t}
-= - \nabla \cdot (\mathbf{u}C) + \nabla \cdot (K \nabla C) + R
-\]
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{1D models}}
-\[
-\frac{\partial C}{\partial t}
-= \frac{\partial}{\partial z}
-\left(K_z \frac{\partial C}{\partial z}\right) + R
-\]
-
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{\textcolor{blue!70!black}{3D models}}
-\[
-\frac{\partial C}{\partial t}
-+ u\frac{\partial C}{\partial x}
-+ v\frac{\partial C}{\partial y}
-+ w\frac{\partial C}{\partial z}
-= \dots
-\]
-
-\includegraphics[width=\linewidth]{figure_placeholder}
-\end{frame}
-
-
 
 \end{document}
